@@ -307,6 +307,11 @@ class Layer(models.Model):
         }
         return layers_dict
         
+
+    @property
+    def toBriefDict(self):
+        brief_keys = ['url','layer_type']
+        return {k: getattr(self,k) for k in brief_keys if hasattr(self,k)}
     def save(self, *args, **kwargs):
         self.slug_name = self.slug
         super(Layer, self).save(*args, **kwargs)

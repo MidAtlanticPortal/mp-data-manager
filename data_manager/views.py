@@ -2,7 +2,7 @@ from django.shortcuts import render
 
 # Create your views here.
 import json
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.views.decorators.cache import cache_page
@@ -18,6 +18,8 @@ def get_json(request):
     }
     return HttpResponse(json.dumps(data))
 
+def layers(request):
+    return JsonResponse(dict([(l.id, l.toBriefDict) for l in Layer.objects.all()]))
 
 def create_layer(request):
     if request.POST:
