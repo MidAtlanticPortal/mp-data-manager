@@ -4,6 +4,7 @@ from . import views
 
 router = routers.DefaultRouter()
 router.register(r'layers', views.LayerViewSet)
+router.register(r'lookup-info', views.LookupInfoViewSet)
 
 urlpatterns = patterns('',
     url(r'^api/', include(router.urls)),

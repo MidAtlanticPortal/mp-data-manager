@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.views.decorators.cache import cache_page
 from models import *
-from .serializers import BriefLayerSerializer
+from .serializers import BriefLayerSerializer, LookupInfoSerializer
 from rest_framework import viewsets
 
 class LayerViewSet(viewsets.ReadOnlyModelViewSet):
@@ -15,6 +15,13 @@ class LayerViewSet(viewsets.ReadOnlyModelViewSet):
     """
     queryset = Layer.objects.all()
     serializer_class = BriefLayerSerializer
+
+class LookupInfoViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    A simple ViewSet for lookup info.
+    """
+    queryset = LookupInfo.objects.all()
+    serializer_class = LookupInfoSerializer
 
 def get_json(request):
     data = {
