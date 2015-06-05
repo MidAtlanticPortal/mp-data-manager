@@ -1,0 +1,11 @@
+{"name":"AWC_Hub_03Feb2012","type":"FeatureCollection"
+,"crs":{"type":"name","properties":{"name":"EPSG:3857"}}
+,"features":[
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-8246577.0246,4778132.8765]},"properties":{"BLOCK_NUMB":" 6687","STATE_GEN":"New Jersey","X_DD":-74.0802605774,"Y_DD":39.3930618674,"OBJECTID":1,"PROT_NUMBE":"NJ18-02","PNT_ID":1}}
+,{"type":"Feature","geometry":{"type":"Point","coordinates":[-8246828.7889,4753245.8065]},"properties":{"BLOCK_NUMB":" 6887","STATE_GEN":"New Jersey","X_DD":-74.0825222234,"Y_DD":39.2200752247,"OBJECTID":2,"PROT_NUMBE":"NJ18-02","PNT_ID":2}}
+,{"type":"Feature","geometry":{"type":"Point","coordinates":[-8278578.7708,4740189.5872]},"properties":{"BLOCK_NUMB":" 6982","STATE_GEN":"New Jersey","X_DD":-74.3677370774,"Y_DD":39.1291522996,"OBJECTID":3,"PROT_NUMBE":"NJ18-02","PNT_ID":3}}
+,{"type":"Feature","geometry":{"type":"Point","coordinates":[-8320650.5812,4667752.2701]},"properties":{"BLOCK_NUMB":" 6425","STATE_GEN":"Delaware","X_DD":-74.745674488,"Y_DD":38.622569282,"OBJECTID":4,"PROT_NUMBE":"NJ18-05","PNT_ID":9}}
+,{"type":"Feature","geometry":{"type":"Point","coordinates":[-8316328.456,4624795.6123]},"properties":{"BLOCK_NUMB":" 6776","STATE_GEN":"Maryland","X_DD":-74.7068482047,"Y_DD":38.3204530569,"OBJECTID":5,"PROT_NUMBE":"NJ18-05","PNT_ID":14}}
+,{"type":"Feature","geometry":{"type":"Point","coordinates":[-8387955.9838,4423079.9893]},"properties":{"BLOCK_NUMB":" 6114","STATE_GEN":"Virginia","X_DD":-75.3502891043,"Y_DD":36.8849251942,"OBJECTID":6,"PROT_NUMBE":"NJ18-11","PNT_ID":17}}
+,{"type":"Feature","geometry":{"type":"Point","coordinates":[-8411915.1176,4420179.6808]},"properties":{"BLOCK_NUMB":" 6160","STATE_GEN":"Virginia","X_DD":-75.5655175994,"Y_DD":36.8640833333,"OBJECTID":7,"PROT_NUMBE":"NJ18-11","PNT_ID":18}}
+]}

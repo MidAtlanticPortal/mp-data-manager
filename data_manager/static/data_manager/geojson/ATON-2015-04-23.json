@@ -1,0 +1,264 @@
+{
+  "type": "FeatureCollection",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:EPSG::3857"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "Aid_Name": "Little Egg Inlet Outer Lighted Whistle Buoy LE",
+        "LLNR": 35,
+        "LATITUDE": "39-27-56.219N",
+        "LONGITUDE": "074-16-27.346W",
+        "Lat_DD": 39.465615999999997,
+        "Long_DD": -74.274263000000005,
+        "Color_Type": "Red & White stripes with red spherical topmark",
+        "Light": "Mo (A) W",
+        "Range": "6 NM",
+        "Prp_Action": "Discontinue Aid- Project 05-15-031",
+        "LNM_Ref": "20/15"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8268173.111468017101288,
+          4788588.285985060036182
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Aid_Name": "Great Egg Harbor Inlet Outer Lighted Whistle Buoy GE",
+        "LLNR": 70,
+        "LATITUDE": "39-16-13.800N",
+        "LONGITUDE": "074-31-55.800W",
+        "Lat_DD": 39.270499999999998,
+        "Long_DD": -74.532167000000001,
+        "Color_Type": "Red & White stripes with red spherical topmark",
+        "Light": "Mo (A) W",
+        "Range": "5 NM",
+        "Prp_Action": "Discontinue Aid- Project 05-15-031",
+        "LNM_Ref": "20/15"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8296882.841052733361721,
+          4760492.776685431599617
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Aid_Name": "Winter Quarter Shoal Buoy 5",
+        "LLNR": 265,
+        "LATITUDE": "37-58-18.440N",
+        "LONGITUDE": "075-09-06.673W",
+        "Lat_DD": 37.971789000000001,
+        "Long_DD": -75.151854,
+        "Color_Type": "Green Can",
+        "Light": null,
+        "Range": null,
+        "Prp_Action": "Discontinue Aid- Project 05-15-033",
+        "LNM_Ref": "20/15"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8365866.076159528456628,
+          4575441.295213944278657
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Aid_Name": "Blackfish Bank Buoy 8A",
+        "LLNR": 285,
+        "LATITUDE": "37-50-25.451N",
+        "LONGITUDE": "075-15-52.695W",
+        "Lat_DD": 37.840403000000002,
+        "Long_DD": -75.264638000000005,
+        "Color_Type": "Red Nun",
+        "Light": null,
+        "Range": null,
+        "Prp_Action": "Discontinue Aid- Project 05-15-033",
+        "LNM_Ref": "20/15"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8378421.121240324340761,
+          4556904.585353427566588
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Aid_Name": "Blackfish Bank Lighted Buoy 8",
+        "LLNR": 290,
+        "LATITUDE": "37-50-37.451N",
+        "LONGITUDE": "075-12-05.685W",
+        "Lat_DD": 37.843736,
+        "Long_DD": -75.201578999999995,
+        "Color_Type": "Red Lighted Gong Buoy",
+        "Light": "Fl R 2.5s",
+        "Range": "4  NM",
+        "Prp_Action": "Discontinue Aid- Project 05-15-033",
+        "LNM_Ref": "20/15"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8371401.499683385714889,
+          4557374.46344443038106
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Aid_Name": "Turners Lump Buoy 2",
+        "LLNR": 295,
+        "LATITUDE": "37-48-54.454N",
+        "LONGITUDE": "075-19-25.706W",
+        "Lat_DD": 37.815125999999999,
+        "Long_DD": -75.323807000000002,
+        "Color_Type": "Red Nun",
+        "Light": null,
+        "Range": null,
+        "Prp_Action": "Discontinue Aid- Project 05-15-033",
+        "LNM_Ref": "20/15"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8385007.864588480442762,
+          4553342.151425580494106
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Aid_Name": "Turners Lump Lighted Bell Buoy 2TL",
+        "LLNR": 300,
+        "LATITUDE": "37-48-55.054N",
+        "LONGITUDE": "075-22-28.714W",
+        "Lat_DD": 37.815292999999997,
+        "Long_DD": -75.374643000000006,
+        "Color_Type": "Red Lighted Bell Buoy",
+        "Light": "Fl R 4s",
+        "Range": "4 NM",
+        "Prp_Action": "Discontinue Aid- Project 05-15-033",
+        "LNM_Ref": "20/15"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8390666.852747118100524,
+          4553365.636779558844864
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Aid_Name": "Rudee Inlet Lighted Whistle Buoy RI",
+        "LLNR": 500,
+        "LATITUDE": "36-49-47.177N",
+        "LONGITUDE": "075-56-57.037W",
+        "Lat_DD": 36.829771000000001,
+        "Long_DD": -75.949177000000006,
+        "Color_Type": "Red & White striped Lighted Whistle Buoy",
+        "Light": "Mo (A) W",
+        "Range": "6 NM",
+        "Prp_Action": "Discontinue Aid- Project 05-15-033",
+        "LNM_Ref": "20/15"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8454623.703623790293932,
+          4415405.601073186844587
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Aid_Name": "Dam Neck Disposal Area Lighted Buoy A",
+        "LLNR": 515,
+        "LATITUDE": "36-50-02.363N",
+        "LONGITUDE": "075-53-24.010W",
+        "Lat_DD": 36.83399,
+        "Long_DD": -75.890002999999993,
+        "Color_Type": "Yellow Lighted Buoy",
+        "Light": "Fl Y 2.5s",
+        "Range": "4 NM",
+        "Prp_Action": "Discontinue Aid- Project 05-15-033",
+        "LNM_Ref": "20/15"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8448036.465522341430187,
+          4415992.287640769965947
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Aid_Name": "Dam Neck Firing Zone Lighted Buoy A",
+        "LLNR": 530,
+        "LATITUDE": "36-49-33.539N",
+        "LONGITUDE": "075-51-01.726W",
+        "Lat_DD": 36.825983000000001,
+        "Long_DD": -75.850479000000007,
+        "Color_Type": "Yellow Lighted Buoy",
+        "Light": "Fl Y 2.5s",
+        "Range": "5 NM",
+        "Prp_Action": "Discontinue Aid- Project 05-15-033",
+        "LNM_Ref": "20/15"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8443636.748181222006679,
+          4414878.746553491801023
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Aid_Name": "Outer Diamond Shoals Buoy 2",
+        "LLNR": 630,
+        "LATITUDE": "35-08-24.645N",
+        "LONGITUDE": "075-23-22.518W",
+        "Lat_DD": 35.140179000000003,
+        "Long_DD": -75.389588000000003,
+        "Color_Type": "Red Nun",
+        "Light": null,
+        "Range": null,
+        "Prp_Action": "Discontinue Aid- Project 05-15-033",
+        "LNM_Ref": "20/15"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8392330.584381187334657,
+          4182947.287867952138186
+        ]
+      }
+    }
+  ]
+}

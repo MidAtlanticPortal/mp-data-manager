@@ -1,0 +1,6 @@
+{"name":"FMCInter","type":"FeatureCollection"
+,"crs":{"type":"name","properties":{"name":"EPSG:3857"}}
+,"features":[
+{"type":"Feature","geometry":{"type":"LineString","coordinates":[[-8445475.64052183,4376606.34372584],[-8348961.98008769,4376606.34766772],[-8237642.45468838,4376606.35207268],[-8126322.9291384,4376606.35632465],[-8015003.40344832,4376606.36042233],[-7958096.30247927,4376606.36245709]]},"properties":{"AREANAME":"Mid-Atlantic and South Atlantic Councils","CFRSUB":" ","CFRPARATXT":" ","AREATYPE":" ","CFRSXNTXT":" ","CFRPT":" ","RECUR":" ","AREAGROUP":" ","SOURCE":" ","CFRPARA":" ","FRCITE":" ","CFRSXN":" ","CFRTITLE":" ","AUTHOR":" ","Id":0,"COMMNAME":" ","CFRPTTXT":" ","DESCRIBE":" ","FID":0,"CFRSUBTXT":" "}}
+,{"type":"Feature","geometry":{"type":"LineString","coordinates":[[-8003871.47756353,5056694.05971557],[-7718461.01411464,4571467.68795236]]},"properties":{"RECUREND":"000000","AREANAME":"New England and Mid-Atlantic Councils","CFRSUB":" ","CFRPARATXT":" ","AREATYPE":" ","CFRSXNTXT":" ","CFRPT":" ","RECUR":" ","AREAGROUP":" ","SOURCE":" ","CFRPARA":" ","RECURST":"000000","FRCITE":" ","CFRSXN":" ","CFRTITLE":" ","AUTHOR":" ","Id":0,"COMMNAME":" ","CFRPTTXT":" ","FRDATE":"000000","DESCRIBE":" ","CREATED":"000000","FID":1,"EFFECTDATE":"000000","CFRSUBTXT":" "}}
+]}
