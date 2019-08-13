@@ -117,6 +117,7 @@ class LayerAdmin(ImportExportMixin, nested_admin.NestedModelAdmin):
         ('LEGEND', {
             'classes': ('collapse',),
             'fields': (
+                'show_legend',
                 'legend',
                 ('legend_title','legend_subtitle')
             )
