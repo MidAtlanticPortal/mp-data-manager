@@ -11,5 +11,8 @@ urlpatterns = patterns('',
     (r'^layer/([A-Za-z0-9_-]+)$', views.update_layer),
     (r'^layer$', views.create_layer),
     (r'^get_json$', views.get_json),
+    (r'^get_themes$', views.get_themes),
+    (r'^get_layer_search_data$', views.get_layer_search_data),
+    (r'^get_layers_for_theme/(?P<themeID>\d+)$', views.get_layers_for_theme),
     (r'^wms_capabilities', views.wms_request_capabilities),
 )

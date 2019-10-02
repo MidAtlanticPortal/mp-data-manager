@@ -106,6 +106,16 @@ class Theme(models.Model, SiteFlags):
 
         return themes_dict
 
+    def getInitDict(self):
+        theme_dict = {
+            'id': self.id,
+            'name': self.name,
+            'display_name': self.display_name,
+            'is_visible': self.visible,
+        }
+
+        return theme_dict
+
     def save(self, *args, **kwargs):
         if 'recache' in kwargs.keys():  #crufty - impacted when MDAT v2 import is run.
             kwargs.pop('recache', None)
