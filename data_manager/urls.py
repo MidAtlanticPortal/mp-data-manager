@@ -16,4 +16,5 @@ urlpatterns = patterns('',
     (r'^get_layers_for_theme/(?P<themeID>\d+)$', views.get_layers_for_theme),
     (r'^get_layer_details/(?P<layerID>\d+)$', views.get_layer_details),
     (r'^wms_capabilities', views.wms_request_capabilities),
+    (r'^get_layer_catalog_content/(?P<layerID>\d+)/$', views.get_layer_catalog_content),
 )
