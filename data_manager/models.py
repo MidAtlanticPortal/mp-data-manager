@@ -106,6 +106,16 @@ class Theme(models.Model, SiteFlags):
 
         return themes_dict
 
+    def getInitDict(self):
+        theme_dict = {
+            'id': self.id,
+            'name': self.name,
+            'display_name': self.display_name,
+            'is_visible': self.visible,
+        }
+
+        return theme_dict
+
     def save(self, *args, **kwargs):
         if 'recache' in kwargs.keys():  #crufty - impacted when MDAT v2 import is run.
             kwargs.pop('recache', None)
@@ -427,10 +437,9 @@ class Layer(models.Model, SiteFlags):
         from django.template.loader import render_to_string
         try:
             return render_to_string(
-                "data_catalog/includes/layer_catalog_info.html",
+                "data_catalog/includes/cacheless_layer_info.html",
                 {
                     'layer': self,
-                    'sub_layers': self.sublayers.exclude(layer_type="placeholder")
                 }
             )
         except Exception as e:
@@ -461,9 +470,18 @@ class Layer(models.Model, SiteFlags):
 
     @property
     def toDict(self, site_id=None):
+        parent = self.parent
+        if parent == self:
+            parent = None
+        elif not parent == None:
+            try:
+                parent = parent.toDict
+            except Exception as e:
+                parent = None
         sublayers = [
             {
                 'id': layer.id,
+                'is_sublayer': layer.is_sublayer,
                 'name': layer.name,
                 'order': layer.order,
                 'type': layer.layer_type,
@@ -513,7 +531,7 @@ class Layer(models.Model, SiteFlags):
                 'dimensions': layer.dimensions,
                 'associated_multilayers': layer.associatedMultilayers
             }
-            for layer in self.sublayers.all()
+            for layer in self.sublayers.filter(is_sublayer=True)
         ]
         connect_companion_layers_to = [
             {
@@ -622,8 +640,80 @@ class Layer(models.Model, SiteFlags):
             'dimensions': self.dimensions,
             'associated_multilayers': self.associatedMultilayers,
             'catalog_html': self.catalog_html,
+            'parent': parent
         }
 
+        return layers_dict
+
+    def catalogDict(self, site_id=None):
+        parent = self.parent
+        if parent == self:
+            parent = None
+        elif not parent == None:
+            try:
+                parent = {
+                    'id':parent.id,
+                    'name': parent.name,
+                }
+            except Exception as e:
+                parent = None
+
+        sublayers = [sublayer.catalogDict(site_id) for sublayer in self.sublayers.filter(is_sublayer=True).order_by('order')]
+        # companions = [companion.catalogDict(site_id) for companion in self.connect_companion_layers_to.all().order_by('order')]
+        layers_dict = {
+            'id': self.id,
+            'name': self.name,
+            'slug_name': self.slug_name,
+            'bookmark_link': self.bookmark_link,
+            'is_sublayer': self.is_sublayer,
+            'parent': parent,
+            'kml': self.kml,
+            'data_download_link': self.data_download_link,
+            'metadata_link': self.metadata_link,
+            'source': self.source_link,
+            'tiles_link': self.tiles_link,
+            'description': self.description,
+            'data_overview': self.data_overview,
+            'espis_enabled': self.espis_enabled,
+            'espis_search': self.espis_search,
+            'espis_region': self.espis_region,
+            'get_espis_link': self.get_espis_link,
+            'sublayers': sublayers,
+            # 'companions': companions
+        }
+
+        return layers_dict
+
+    def shortDict(self, site_id=None):
+        sublayers = [{
+            'id':sublayer.id,
+            'parent': {'name':self.name},
+            'name':sublayer.name,
+            'slug_name': sublayer.slug_name,
+            'bookmark_link': sublayer.bookmark_link,
+            'is_sublayer': True,
+            'sublayers': [],
+        } for sublayer in self.sublayers.filter(is_sublayer=True).order_by('name')]
+        # sublayers = [sublayer.shortDict(site_id) for sublayer in self.sublayers.filter(is_sublayer=True).order_by('order')]
+        # companions = [{
+        #     'id':companion.id,
+        #     'parent': {'name':self.name},
+        #     'name':companion.name,
+        #     'slug_name': companion.slug_name,
+        #     'bookmark_link': companion.bookmark_link,
+        #     'is_sublayer': companion.is_sublayer,
+        #     'sublayers': [],
+        # } for companion in self.connect_companion_layers_to.all().order_by('name')]
+        layers_dict = {
+            'id': self.id,
+            'parent': None,
+            'name': self.name,
+            'slug_name': self.slug_name,
+            'bookmark_link': self.bookmark_link,
+            'is_sublayer': self.is_sublayer,
+            'sublayers': sublayers,
+            # 'companions': companions,
+        }
         return layers_dict
 
     def save(self, *args, **kwargs):
