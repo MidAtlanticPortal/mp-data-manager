@@ -13,16 +13,16 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterModelManagers(
-            name='layer',
-            managers=[
-                ('objects', django.contrib.sites.managers.CurrentSiteManager(b'site')),
-            ],
-        ),
-        migrations.AlterModelManagers(
-            name='theme',
-            managers=[
-                ('objects', django.contrib.sites.managers.CurrentSiteManager(b'site')),
-            ],
-        ),
+        #migrations.AlterModelManagers(
+        #    name='layer',
+        #    managers=[
+        #        ('objects', django.contrib.sites.managers.CurrentSiteManager(b'site')),
+        #    ],
+        #),
+        #migrations.AlterModelManagers(
+        #    name='theme',
+        #    managers=[
+        #        ('objects', django.contrib.sites.managers.CurrentSiteManager(b'site')),
+        #    ],
+        #),
     ]
