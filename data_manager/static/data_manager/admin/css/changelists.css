@@ -1,0 +1,16 @@
+th.column-name {
+  min-width: 40vw;
+}
+
+.row1 {
+  background: #EDF3FE;
+}
+
+.row2 {
+  background: #FFF;
+}
+
+a:link, a:visited {
+    color: #5b80b2;
+    text-decoration: none;
+}
