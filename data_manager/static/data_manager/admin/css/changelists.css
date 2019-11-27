@@ -1,3 +1,7 @@
+td, th {
+  font-family: "Lucida Grande", Verdana, Arial, sans-serif;
+}
+
 th.column-name {
   min-width: 40vw;
 }
