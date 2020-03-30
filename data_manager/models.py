@@ -738,28 +738,28 @@ class Layer(models.Model, SiteFlags):
         if 'recache' in kwargs.keys():
             kwargs.pop('recache', None)
         super(Layer, self).save(*args, **kwargs)
-        for site in Site.objects.all():
-            cache.delete('data_manager_json_site_%s' % site.pk)
-            cache.delete('data_manager_layer_%d_%d' % (self.id, site.pk))
-            self.dictCache(site.pk)
-            # Delete cache for all sublayers
-            for sublayer in self.sublayers.all():
-                cache.delete('data_manager_layer_%d_%d' % (sublayer.id, site.pk))
-                sublayer.dictCache(site.pk)
-            # Delete cache for parent layers (in case not double-linked)
-            for parentlayer in Layer.objects.filter(sublayers__in=[self]):
-                cache.delete('data_manager_layer_%d_%d' % (parentlayer.id, site.pk))
-                parentlayer.dictCache(site.pk)
-            # Delete cache for companion layers
-            for companion in self.connect_companion_layers_to.all():
-                cache.delete('data_manager_layer_%d_%d' % (companion.id, site.pk))
-                companion.dictCache(site.pk)
-            for companion in Layer.objects.filter(connect_companion_layers_to__in=[self]):
-                cache.delete('data_manager_layer_%d_%d' % (companion.id, site.pk))
-                companion.dictCache(site.pk)
-            for association in self.associated_layer.all():
-                cache.delete('data_manager_layer_%d_%d' % (association.parentLayer.pk, site.pk))
-                association.layer.dictCache(site.pk)
+        # for site in Site.objects.all():
+        #     cache.delete('data_manager_json_site_%s' % site.pk)
+        #     cache.delete('data_manager_layer_%d_%d' % (self.id, site.pk))
+        #     self.dictCache(site.pk)
+        #     # Delete cache for all sublayers
+        #     for sublayer in self.sublayers.all():
+        #         cache.delete('data_manager_layer_%d_%d' % (sublayer.id, site.pk))
+        #         # sublayer.dictCache(site.pk)
+        #     # Delete cache for parent layers (in case not double-linked)
+        #     for parentlayer in Layer.objects.filter(sublayers__in=[self]):
+        #         cache.delete('data_manager_layer_%d_%d' % (parentlayer.id, site.pk))
+        #         # parentlayer.dictCache(site.pk)
+        #     # Delete cache for companion layers
+        #     for companion in self.connect_companion_layers_to.all():
+        #         cache.delete('data_manager_layer_%d_%d' % (companion.id, site.pk))
+        #         # companion.dictCache(site.pk)
+        #     for companion in Layer.objects.filter(connect_companion_layers_to__in=[self]):
+        #         cache.delete('data_manager_layer_%d_%d' % (companion.id, site.pk))
+        #         # companion.dictCache(site.pk)
+        #     for association in self.associated_layer.all():
+        #         cache.delete('data_manager_layer_%d_%d' % (association.parentLayer.pk, site.pk))
+        #         # association.layer.dictCache(site.pk)
 
 
 class AttributeInfo(models.Model):
