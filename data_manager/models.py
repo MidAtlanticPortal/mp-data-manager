@@ -238,11 +238,17 @@ class Layer(models.Model, SiteFlags):
         return self
 
     def get_absolute_url(self):
-        theme = self.themes.filter(visible=True).first()
+        themes = self.themes.filter(visible=True)
+        theme = False
+        for theme in themes:
+            if not theme.name == 'companion':
+                break
+
         if theme:
             theme_url = reverse('portal.data_catalog.views.theme', args=[theme.name])
-            if theme_url:
+            if theme_url and not theme.name == 'companion':
                 return "{0}#layer-info-{1}".format(theme_url, self.slug_name)
+        return False
 
     @property
     def slug(self):
