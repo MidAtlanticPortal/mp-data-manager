@@ -1,5 +1,7 @@
-# from django.conf.urls import url, include, patterns
-from django.urls import re_path, include
+try:
+    from django.urls import re_path, include
+except ModuleNotFoundError as e:
+    from django.conf.urls import url as re_path, include, patterns
 from rest_framework import routers
 from . import views
 

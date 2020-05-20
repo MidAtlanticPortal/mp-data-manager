@@ -2,7 +2,10 @@ from django.contrib.sites.managers import CurrentSiteManager
 from django.contrib.sites.models import Site
 from django.db import models
 from django.template.defaultfilters import slugify
-from django.urls import reverse
+try:
+    from django.urls import reverse
+except ModuleNotFoundError as e:
+    from django.core.urlresolvers import reverse
 from django.conf import settings
 #from sorl.thumbnail import ImageField
 
