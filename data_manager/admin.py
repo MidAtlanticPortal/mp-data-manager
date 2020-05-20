@@ -88,7 +88,7 @@ class LayerForm(forms.ModelForm):
 class LayerAdmin(ImportExportMixin, nested_admin.NestedModelAdmin):
     resource_class = LayerResource
     form = LayerForm
-    list_display = ('name', 'layer_type', 'Theme_', 'order', 'data_publish_date', 'data_source', 'primary_site', 'preview_site', 'url')
+    list_display = ('name', 'layer_type', 'Theme_', 'data_publish_date', 'primary_site', 'preview_site', 'url')
     search_fields = ['name', 'layer_type', 'url', 'data_source']
     ordering = ('name',)
     exclude = ('slug_name',)
@@ -205,6 +205,7 @@ class LayerAdmin(ImportExportMixin, nested_admin.NestedModelAdmin):
     BASE_DIR = data_manager_settings.DATA_MANAGER_BASE_DIR
     add_form_template = '%s/data_manager/templates/admin/LayerForm.html' % BASE_DIR
     change_form_template = '%s/data_manager/templates/admin/LayerForm.html' % BASE_DIR
+    change_list_template = '%s/data_manager/templates/admin/data_manager/change_list.html' % BASE_DIR
 
     def Theme_(self, obj):
         return obj.themes.first()

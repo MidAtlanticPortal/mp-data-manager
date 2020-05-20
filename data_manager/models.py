@@ -281,10 +281,15 @@ class Layer(models.Model, SiteFlags):
 
     def get_absolute_url(self):
         if settings.DATA_CATALOG_ENABLED:
-            theme = self.themes.filter(visible=True).first()
+            themes = self.themes.filter(visible=True)
+            theme = False
+            for theme in themes:
+                if not theme.name == 'companion':
+                    break
+
             if theme:
                 theme_url = reverse('portal.data_catalog.views.theme', args=[theme.name])
-                if theme_url:
+                if theme_url and not theme.name == 'companion':
                     return "{0}#layer-info-{1}".format(theme_url, self.slug_name)
         return None
 
@@ -792,33 +797,35 @@ class Layer(models.Model, SiteFlags):
         #       How do we do this thoroughly?
         #       How do we avoid infinite loops? (companions)(recursion?)
         super(Layer, self).save(*args, **kwargs)
-        for site in Site.objects.all():
-            cache.delete('data_manager_json_site_%s' % site.pk)
-            cache.delete('data_manager_layer_%d_%d' % (self.id, site.pk))
-            self.dictCache(site.pk)
-            # Delete cache for all sublayers
-            for sublayer in self.sublayers.all():
-                cache.delete('data_manager_layer_%d_%d' % (sublayer.id, site.pk))
-                sublayer.dictCache(site.pk)
-            # Delete cache for parent layers (in case not double-linked)
-            for parentlayer in Layer.objects.filter(sublayers__in=[self]):
-                cache.delete('data_manager_layer_%d_%d' % (parentlayer.id, site.pk))
-                parentlayer.dictCache(site.pk)
-            # Delete cache for companion layers
-            for companion in self.connect_companion_layers_to.all():
-                cache.delete('data_manager_layer_%d_%d' % (companion.id, site.pk))
-                companion.dictCache(site.pk)
-            for companion in Layer.objects.filter(connect_companion_layers_to__in=[self]):
-                cache.delete('data_manager_layer_%d_%d' % (companion.id, site.pk))
-                companion.dictCache(site.pk)
-            for association in self.associated_layer.all():
-                cache.delete('data_manager_layer_%d_%d' % (association.parentLayer.pk, site.pk))
-                association.layer.dictCache(site.pk)
-            # TODO: if len(self.themes.all() == 0): delete all theme caches?
-            #   On initial save, layers don't seem to know what themes they are associated with. :(
-            for theme in self.themes.all():
-                cache.delete('data_manager_theme_%d_%d' % (theme.pk, site.pk))
-                theme.dictCache(site.pk)
+
+        # for site in Site.objects.all():
+        #     cache.delete('data_manager_json_site_%s' % site.pk)
+        #     cache.delete('data_manager_layer_%d_%d' % (self.id, site.pk))
+        #     self.dictCache(site.pk)
+        #     # Delete cache for all sublayers
+        #     for sublayer in self.sublayers.all():
+        #         cache.delete('data_manager_layer_%d_%d' % (sublayer.id, site.pk))
+        #         # sublayer.dictCache(site.pk)
+        #     # Delete cache for parent layers (in case not double-linked)
+        #     for parentlayer in Layer.objects.filter(sublayers__in=[self]):
+        #         cache.delete('data_manager_layer_%d_%d' % (parentlayer.id, site.pk))
+        #         # parentlayer.dictCache(site.pk)
+        #     # Delete cache for companion layers
+        #     for companion in self.connect_companion_layers_to.all():
+        #         cache.delete('data_manager_layer_%d_%d' % (companion.id, site.pk))
+        #         # companion.dictCache(site.pk)
+        #     for companion in Layer.objects.filter(connect_companion_layers_to__in=[self]):
+        #         cache.delete('data_manager_layer_%d_%d' % (companion.id, site.pk))
+        #         # companion.dictCache(site.pk)
+        #     for association in self.associated_layer.all():
+        #         cache.delete('data_manager_layer_%d_%d' % (association.parentLayer.pk, site.pk))
+        #         # association.layer.dictCache(site.pk)
+
+        # # TODO: if len(self.themes.all() == 0): delete all theme caches?
+        # #   On initial save, layers don't seem to know what themes they are associated with. :(
+        # for theme in self.themes.all():
+        #     cache.delete('data_manager_theme_%d_%d' % (theme.pk, site.pk))
+        #     theme.dictCache(site.pk)
 
 
 class AttributeInfo(models.Model):

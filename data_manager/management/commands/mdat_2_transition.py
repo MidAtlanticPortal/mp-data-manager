@@ -204,7 +204,7 @@ class Command(BaseCommand):
             #
             # # print('Found %d layers for V1 %s' % (len(v1_layers),service))
             #
-            # layer_name_lookup = {}
+            layer_name_lookup = {}
             # for layer in v1_layers:
             #     v1_matches = Layer.all_objects.filter(url="%s/export" % service_value_lookup[service]['url']['v1'], arcgis_layers=str(layer['id']))
             #     # #   if layer exists for v1.1 in db

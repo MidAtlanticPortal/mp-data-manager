@@ -1,0 +1,9 @@
+{% extends "admin/import_export/change_list_import_export.html" %}
+
+{% load static %}
+{% block extrastyle %}
+
+  {{ block.super }}
+  <link rel="stylesheet" type="text/css" href="{% static "data_manager/admin/css/changelists.css" %}" />
+
+{% endblock %}
