@@ -4,7 +4,7 @@ from django.db import models
 from django.template.defaultfilters import slugify
 try:
     from django.urls import reverse
-except ModuleNotFoundError as e:
+except (ModuleNotFoundError, ImportError) as e:
     from django.core.urlresolvers import reverse
 from django.conf import settings
 #from sorl.thumbnail import ImageField
