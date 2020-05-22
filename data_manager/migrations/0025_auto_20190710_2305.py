@@ -40,4 +40,9 @@ class Migration(migrations.Migration):
             name='themes',
             field=models.ManyToManyField(blank=True, to='data_manager.Theme'),
         ),
+        migrations.AddField(
+            model_name='layer',
+            name='show_legend',
+            field=models.BooleanField(default=True, help_text='show the legend for this layer if available'),
+        ),
     ]

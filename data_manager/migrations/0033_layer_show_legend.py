@@ -9,10 +9,5 @@ class Migration(migrations.Migration):
         ('data_manager', '0032_auto_20191113_0013'),
     ]
 
-    operations = [
-        migrations.AddField(
-            model_name='layer',
-            name='show_legend',
-            field=models.BooleanField(default=True, help_text='show the legend for this layer if available'),
-        ),
-    ]
+    # This content moved to migration 0025 to facilitate merging in mida data
+    operations = []
