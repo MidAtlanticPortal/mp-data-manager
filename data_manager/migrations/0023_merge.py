@@ -12,4 +12,11 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        # From migration 0025 on the MidAtlantic Fork and from 0033 on the Ecotrust Fork
+        #   This file is the lowest common denominator.
+        migrations.AddField(
+            model_name='layer',
+            name='show_legend',
+            field=models.BooleanField(default=True, help_text='show the legend for this layer if available'),
+        ),
     ]
