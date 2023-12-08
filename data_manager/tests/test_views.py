@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.urls import reverse
 import json
 
-from data_manager.models import Layer
+from data_manager.models import Layer, Theme
 
 class get_layer_details_test(TestCase):
     @classmethod
@@ -21,3 +21,6 @@ class get_layer_details_test(TestCase):
         self.assertTrue('maxZoom' in result.keys())
         self.assertEqual(result['minZoom'], 6)
         self.assertEqual(result['maxZoom'], 14)
+        print('Hello World')
+
+class get_json_test(TestCase):
