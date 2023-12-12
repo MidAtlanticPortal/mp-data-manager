@@ -80,6 +80,7 @@ def get_layers_for_theme(request, themeID):
     return JsonResponse({'layers': layer_list})
 
 def get_layer_details(request, layerID):
+ 
     try:
         layer = Layer.all_objects.get(pk=layerID)
         return JsonResponse(layer.toDict)
