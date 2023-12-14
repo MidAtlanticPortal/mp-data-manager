@@ -1,12 +1,11 @@
 from django.test import TestCase
 from django.test.client import RequestFactory
 from data_manager.models import Layer, Theme
-from data_manager.views import get_json, get_themes
+from data_manager.views import get_json, get_themes, get_layer_search_data, get_layers_for_theme
 from collections.abc import Collection, Mapping
-from django.contrib.sites.models import Site
 import json
 
-class get_layer_details_test(TestCase):
+class GetLayerDetailsTest(TestCase):
     def setUp(self):
         congress_layer_url="https://coast.noaa.gov/arcgis/rest/services/OceanReports/USCongressionalDistricts/MapServer/export"
         theme1 = Theme.objects.create(id=1, name="companion", display_name="companion", visible=True)
@@ -237,6 +236,7 @@ class get_layer_details_test(TestCase):
         for key in result["subLayers"][0].keys():
             #description and overview takes from parent, but parent should not be set
             if not key in ["is_sublayer", "date_modified", "companion_layers", "description", "overview"]:
+
                 if key != "parent":
                     self.assertEqual(result["subLayers"][0][key], layer3dict[key])
                 else:
@@ -286,7 +286,7 @@ class get_layer_details_test(TestCase):
         self.assertEqual(result["associated_multilayers"], {})
         self.assertEqual(result["parent"], None)
 
-class data_manager_get_json_test(TestCase):
+class DataManagerGetJsonTest(TestCase):
     def setUp(self):
         # Every test needs access to the request factory.
         self.factory = RequestFactory()
@@ -384,22 +384,70 @@ class DataManagerGetLayerSearchData(TestCase):
         theme2 = Theme.objects.create(id=2, name="test4", display_name="test4", visible=True, description="test 4")
         theme2.site.set([1])
         layer1 = Layer.objects.create(id=1, name="layertest1", is_sublayer=False)
+        layer1.site.set([1])
         layer1.themes.set([theme1])
+        # Layer2 is sublayer of layer 1
         layer2 = Layer.objects.create(id=2, name="layertest2", is_sublayer=True)
+        layer2.site.set([1])
         layer2.sublayers.set([layer1])
         layer2.themes.set([theme1])
         layer3 = Layer.objects.create(id=3, name="layertest3", is_sublayer=False)
+        layer3.site.set([1])
         layer3.themes.set([theme2])
 
      def test_get_layer_search_data_response_format(self):
         request = self.factory.get('/data_manager/get_layer_search_data')
         request.META['HTTP_HOST'] = "localhost:8000" 
 
-        response = get_themes(request)
+        response = get_layer_search_data(request)
         self.assertEqual(response.status_code, 200)
         result = json.loads(response.content)
-        print(result)
 
+        # Sublayers are not shown, should only return layers as keys that are not sublayers
+        self.assertIn('layertest1', result, "result should have layertest1 key")
+        self.assertIn('layertest3', result, "result should have layertest3 key")
+        self.assertIn("layer", result["layertest1"], "should have layer key")
+        self.assertIn("theme", result["layertest1"], "should have theme key")
+        self.assertIn("id", result["layertest1"]["layer"], "each layer should have id key")
+        self.assertIn("name", result["layertest1"]["layer"], "each layer should have name key")
+        self.assertIn("has_sublayers", result["layertest1"]["layer"], "each layer should have has_sublayers key")
+        self.assertIn("sublayers", result["layertest1"]["layer"], "each layer should have sublayers key")
+        self.assertIn("name", result["layertest1"]["layer"]["sublayers"][0], "each sublayer should have name key")
+        self.assertIn("id", result["layertest1"]["layer"]["sublayers"][0], "each sublayer should have id key")
+        self.assertIn("id", result["layertest1"]["theme"], "each theme should have id key")
+        self.assertIn("name", result["layertest1"]["theme"], "each theme should have name key")
+        self.assertIn("description", result["layertest1"]["theme"], "each theme should have description key")
+
+        self.assertIsInstance(result, dict, "result should be dictionary")
+        self.assertIsInstance(result["layertest1"], dict, "result's keys should be dictionary")
+        self.assertIsInstance(result["layertest1"]["layer"], dict, "layer should be dictionary")
+        self.assertIsInstance(result["layertest1"]["theme"], dict, "theme should be dictionary")
+        self.assertIsInstance(result["layertest1"]["layer"]["id"], int, "id should be integer")
+        self.assertIsInstance(result["layertest1"]["layer"]["name"], str, "name should be string")
+        self.assertIsInstance(result["layertest1"]["layer"]["has_sublayers"], bool, "has_sublayers should be boolean")
+        self.assertIsInstance(result["layertest1"]["layer"]["sublayers"], Collection, "sublayers should be collection")
+        self.assertIsInstance(result["layertest1"]["layer"]["sublayers"][0], dict, "each sublayer should be a dictionary")
+        self.assertIsInstance(result["layertest1"]["layer"]["sublayers"][0]["name"], str, "name should be string")
+        self.assertIsInstance(result["layertest1"]["layer"]["sublayers"][0]["id"], int, "id should be integer")
+        self.assertIsInstance(result["layertest1"]["theme"]["id"], int, "theme id should be integer")
+        self.assertIsInstance(result["layertest1"]["theme"]["name"], str, "theme name should be string")
+        self.assertIsInstance(result["layertest1"]["theme"]["description"], str, "theme description should be string")
+
+        self.assertEqual(result["layertest1"]["layer"]["id"], 1)
+        self.assertEqual(result["layertest1"]["layer"]["name"], "layertest1")
+        self.assertEqual(result["layertest1"]["layer"]["has_sublayers"], True)
+        self.assertEqual(result["layertest1"]["layer"]["sublayers"][0]["name"], "layertest2")
+        self.assertEqual(result["layertest1"]["layer"]["sublayers"][0]["id"], 2)
+        self.assertEqual(result["layertest1"]["theme"]["id"], 1)
+        self.assertEqual(result["layertest1"]["theme"]["name"], "test3")
+        self.assertEqual(result["layertest1"]["theme"]["description"], "test 3")
+        self.assertEqual(result["layertest3"]["layer"]["id"], 3)
+        self.assertEqual(result["layertest3"]["layer"]["name"], "layertest3")
+        self.assertEqual(result["layertest3"]["layer"]["has_sublayers"], False)
+        self.assertEqual(result["layertest3"]["layer"]["sublayers"], [])
+        self.assertEqual(result["layertest3"]["theme"]["id"], 2)
+        self.assertEqual(result["layertest3"]["theme"]["name"], "test4")
+        self.assertEqual(result["layertest3"]["theme"]["description"], "test 4")
 
 class DataManagerGetLayersForTheme(TestCase):
     def setUp(self):
@@ -410,7 +458,7 @@ class DataManagerGetLayersForTheme(TestCase):
         request = self.factory.get('/data_manager/get_layer_search_data')
         request.META['HTTP_HOST'] = "localhost:8000" 
 
-        response = get_themes(request)
+        response = get_layers_for_theme(request)
         self.assertEqual(response.status_code, 200)
         result = json.loads(response.content)
 
