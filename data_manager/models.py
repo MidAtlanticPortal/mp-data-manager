@@ -274,11 +274,6 @@ class Layer(models.Model, SiteFlags):
     ######################################################
     #                  Attribute Reporting               #
     ######################################################
-    
-    
-   
-
-
     label_field = models.CharField(max_length=255, blank=True, null=True, help_text="Which field should be used for labels and feature identification in reports?")
     #geojson javascript attribution
     EVENT_CHOICES = (
