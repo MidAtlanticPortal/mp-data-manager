@@ -634,14 +634,58 @@ class DataManagerGetLayersForThemeTest(TestCase):
     def setUp(self):
         # Every test needs access to the request factory.
         self.factory = RequestFactory()  
+        congress_layer_url="https://coast.noaa.gov/arcgis/rest/services/OceanReports/USCongressionalDistricts/MapServer/export"
+        theme1 = Theme.objects.create(id=1, name="companion", display_name="companion", visible=True, description="test")
+        theme1.site.set([1])
+        # This test layer will have attributes defined to test data type when filled out
+        layer1 =Layer.objects.create(id=1, name="arcrest_layer", order=15, layer_type="arcgis", url=congress_layer_url, arcgis_layers="19", password_protected=True, query_by_point=True,  maxZoom=14, minZoom=6, proxy_url=True, disable_arcgis_attributes=True, utfurl="testing", wms_slug="hi", wms_version="hello", 
+                             wms_format="pusheen", wms_srs="world", wms_styles="style", wms_timing="hullo", wms_time_item="ello", wms_additional="star", wms_info=True, wms_info_format="test", has_companion=True, search_query=True, legend="hi", legend_title="title", legend_subtitle="subtitle", description="testlayer", 
+                             data_overview="testlayer", data_source="testlayer", data_notes="testlayer", kml="testlayer", data_download="testlayer", learn_more="testlayer", metadata="testlayer", source="testlayer", label_field="testlayer", custom_style="testlayer", vector_outline_color="blue", vector_outline_opacity=5, vector_outline_width=2, point_radius=8,
+                             vector_color="blue", vector_fill=5, vector_graphic="testlayer", vector_graphic_scale=5, opacity=0.8, is_annotated=True, is_disabled=True, disabled_message="testlayer")
+        # This test layer will not have attributes defined other than required fields to test default behavior when attributes left empty
+        layer1.site.set([1])
+        layer1.themes.set([1])
+        layer2 = Layer.objects.create(id=2, name="sublayer", layer_type="arcgis", is_sublayer=True)
+        layer2.site.set([1])
+        layer2.themes.set([1])
+        layer1.sublayers.set([layer2])
 
     def test_get_layer_search_data_response_format(self):
-        request = self.factory.get("/data_manager/get_layers_for_theme/1")
+        request = self.factory.get("/data_manager/get_layers_for_theme")
         request.META["HTTP_HOST"] = "localhost:8000" 
 
-        response = get_layers_for_theme(request)
+        response = get_layers_for_theme(request, 1)
         self.assertEqual(response.status_code, 200)
         result = json.loads(response.content)
+        print(result)
 
+        self.assertIn("layers", result)
+        self.assertIn("id", result["layers"][0])
+        self.assertIn("name", result["layers"][0])
+        self.assertIn("type", result["layers"][0])
+        self.assertIn("has_sublayers", result["layers"][0])
+        self.assertIn("subLayers", result["layers"][0])
+        self.assertIn("id", result["layers"][0]["subLayers"][0])
+        self.assertIn("name", result["layers"][0]["subLayers"][0])
+        self.assertIn("slug_name", result["layers"][0]["subLayers"][0])
 
-      
+        self.assertIsInstance(result, Collection, "result should be collection")
+        self.assertIsInstance(result["layers"], Collection, "layers should be collection")
+        self.assertIsInstance(result["layers"][0], dict, "each layer should be a dictionary")
+        self.assertIsInstance(result["layers"][0]["id"], int, "id should be integer")
+        self.assertIsInstance(result["layers"][0]["name"], str, "name should be string")
+        self.assertIsInstance(result["layers"][0]["type"], str, "type should be string")
+        self.assertIsInstance(result["layers"][0]["has_sublayers"], bool, "has_sublayers should be boolean")
+        self.assertIsInstance(result["layers"][0]["subLayers"], Collection, "subLayers should be collection")
+        self.assertIsInstance(result["layers"][0]["subLayers"][0], dict, "each subLayer should be a dictionary")
+        self.assertIsInstance(result["layers"][0]["subLayers"][0]["id"], int, "id should be integer")
+        self.assertIsInstance(result["layers"][0]["subLayers"][0]["name"], str, "name should be string")
+        self.assertIsInstance(result["layers"][0]["subLayers"][0]["slug_name"], str, "slug_name should be string")
+
+        self.assertEqual(result["layers"][0]["id"], 1)
+        self.assertEqual(result["layers"][0]["name"], "arcrest_layer")
+        self.assertEqual(result["layers"][0]["type"], "arcgis")
+        self.assertEqual(result["layers"][0]["has_sublayers"], True)
+        self.assertEqual(result["layers"][0]["subLayers"][0]["id"], 2)
+        self.assertEqual(result["layers"][0]["subLayers"][0]["name"], "sublayer")
+        self.assertEqual(result["layers"][0]["subLayers"][0]["slug_name"], "sublayer2")
