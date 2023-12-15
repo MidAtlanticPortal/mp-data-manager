@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.test.client import RequestFactory
 from data_manager.models import Layer, Theme
-from data_manager.views import get_json, get_themes, get_layer_search_data, get_layers_for_theme
+from data_manager.views import get_json, get_themes, get_layer_search_data, get_layers_for_theme, wms_request_capabilities
 from collections.abc import Collection, Mapping
 import json
 
@@ -650,14 +650,13 @@ class DataManagerGetLayersForThemeTest(TestCase):
         layer2.themes.set([1])
         layer1.sublayers.set([layer2])
 
-    def test_get_layer_search_data_response_format(self):
+    def test_get_layers_for_theme(self):
         request = self.factory.get("/data_manager/get_layers_for_theme")
         request.META["HTTP_HOST"] = "localhost:8000" 
 
         response = get_layers_for_theme(request, 1)
         self.assertEqual(response.status_code, 200)
         result = json.loads(response.content)
-        print(result)
 
         self.assertIn("layers", result)
         self.assertIn("id", result["layers"][0])
@@ -689,3 +688,81 @@ class DataManagerGetLayersForThemeTest(TestCase):
         self.assertEqual(result["layers"][0]["subLayers"][0]["id"], 2)
         self.assertEqual(result["layers"][0]["subLayers"][0]["name"], "sublayer")
         self.assertEqual(result["layers"][0]["subLayers"][0]["slug_name"], "sublayer2")
+
+class DataManagerWMSRequestCapabilities(TestCase):
+    def setUp(self):
+        # Every test needs access to the request factory.
+        self.factory = RequestFactory()  
+
+    def test_wms_request_capabilities_response(self):
+        request = self.factory.get("/data_manager/wms_capabilities/?url=https%3A%2F%2Fwww.coastalatlas.net%2Fservices%2Fwms%2Fgetmap%2F%3F")
+        request.META["HTTP_HOST"] = "localhost:8000" 
+
+        response = wms_request_capabilities(request)
+        self.assertEqual(response.status_code, 200)
+        result = json.loads(response.content)
+        print(result)
+
+        self.assertIn("layers", result)
+        self.assertIn("formats", result)
+        self.assertIn("version", result)
+        self.assertIn("styles", result)
+        for i in range(len(result["layers"])):
+            layer = result["layers"][i]
+            self.assertIn(result["layers"][i], result["styles"])
+        self.assertIn("srs", result)
+        for i in range(len(result["layers"])):
+            self.assertIn(result["layers"][i], result["srs"])
+        self.assertIn("queryable", result)
+        for i in range(len(result["queryable"])):
+            self.assertIn(result["queryable"][i], result["layers"])
+        self.assertIn("time", result)
+        for i in range(len(result["layers"])):
+            layer = result["layers"][i]
+            self.assertIn(result["layers"][i], result["time"])
+            self.assertIn("positions", result["time"][layer])
+            self.assertIn("default", result["time"][layer])
+            self.assertIn("field", result["time"][layer])
+        self.assertIn("capabilities", result)
+        self.assertIn("featureInfo", result["capabilities"])
+        self.assertIn("available", result["capabilities"]["featureInfo"])
+        self.assertIn("formats", result["capabilities"]["featureInfo"])
+
+        self.assertIsInstance(result, dict)
+        self.assertIsInstance(result["layers"], Collection)
+        self.assertIsInstance(result["layers"][0], str)
+        self.assertIsInstance(result["formats"], Collection)
+        if len(result["formats"]) > 0:
+            for i in range(len(result["formats"])):
+                self.assertIsInstance(result["formats"][i], str)
+        self.assertIsInstance(result["version"], str)
+        self.assertIsInstance(result["styles"], dict)
+        for i in range(len(result["layers"])):
+            layer = result["layers"][i]
+            self.assertIsInstance(result["styles"][layer], dict)
+        self.assertIsInstance(result["srs"], dict)
+        for i in range(len(result["layers"])):
+            layer = result["layers"][i]
+            self.assertIsInstance(result["srs"][layer], Collection)
+            self.assertIsInstance(result["srs"][layer][0], str)
+        self.assertIsInstance(result["queryable"], Collection)
+        self.assertIsInstance(result["queryable"][0], str)
+        self.assertIsInstance(result["time"], dict)
+        for i in range(len(result["layers"])):
+            layer = result["layers"][i]
+            self.assertIsInstance(result["time"][layer], dict)
+        self.assertIsInstance(result["capabilities"], dict)
+        self.assertIsInstance(result["capabilities"]["featureInfo"], dict)
+        self.assertIsInstance(result["capabilities"]["featureInfo"]["available"], bool)
+        self.assertIsInstance(result["capabilities"]["featureInfo"]["formats"], Collection)
+
+        self.assertEqual(result["version"], "1.1.1")
+        self.assertEqual(len(result["layers"]), len(result["styles"]))
+        self.assertEqual(len(result["layers"]), len(result["srs"]))
+        self.assertEqual(len(result["layers"]), len(result["time"]))
+        self.assertEqual(result["capabilities"]["featureInfo"]["available"], True)
+
+
+
+
+
