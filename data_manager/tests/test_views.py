@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.test.client import RequestFactory
 from data_manager.models import Layer, Theme
-from data_manager.views import get_json, get_themes, get_layer_search_data, get_layers_for_theme, wms_request_capabilities
+from data_manager.views import get_json, get_themes, get_layer_search_data, get_layers_for_theme, wms_request_capabilities, get_layer_catalog_content
 from collections.abc import Collection, Mapping
 import json
 
@@ -701,7 +701,6 @@ class DataManagerWMSRequestCapabilities(TestCase):
         response = wms_request_capabilities(request)
         self.assertEqual(response.status_code, 200)
         result = json.loads(response.content)
-        print(result)
 
         self.assertIn("layers", result)
         self.assertIn("formats", result)
@@ -762,7 +761,34 @@ class DataManagerWMSRequestCapabilities(TestCase):
         self.assertEqual(len(result["layers"]), len(result["time"]))
         self.assertEqual(result["capabilities"]["featureInfo"]["available"], True)
 
+class DataManagerGetLayerCatalogContent(TestCase):
+    def setUp(self):
+        # Every test needs access to the request factory.
+        self.factory = RequestFactory()  
+        congress_layer_url="https://coast.noaa.gov/arcgis/rest/services/OceanReports/USCongressionalDistricts/MapServer/export"
+        theme1 = Theme.objects.create(id=1, name="companion", display_name="companion", visible=True, description="test")
+        theme1.site.set([1])
+        # This test layer will have attributes defined to test data type when filled out
+        layer1 =Layer.objects.create(id=1, name="arcrest_layer", order=15, layer_type="arcgis", url=congress_layer_url, arcgis_layers="19", password_protected=True, query_by_point=True,  maxZoom=14, minZoom=6, proxy_url=True, disable_arcgis_attributes=True, utfurl="testing", wms_slug="hi", wms_version="hello", 
+                             wms_format="pusheen", wms_srs="world", wms_styles="style", wms_timing="hullo", wms_time_item="ello", wms_additional="star", wms_info=True, wms_info_format="test", has_companion=True, search_query=True, legend="hi", legend_title="title", legend_subtitle="subtitle", description="testlayer", 
+                             data_overview="testlayer", data_source="testlayer", data_notes="testlayer", kml="testlayer", data_download="testlayer", learn_more="testlayer", metadata="testlayer", source="testlayer", label_field="testlayer", custom_style="testlayer", vector_outline_color="blue", vector_outline_opacity=5, vector_outline_width=2, point_radius=8,
+                             vector_color="blue", vector_fill=5, vector_graphic="testlayer", vector_graphic_scale=5, opacity=0.8, is_annotated=True, is_disabled=True, disabled_message="testlayer")
+        # This test layer will not have attributes defined other than required fields to test default behavior when attributes left empty
+        layer1.site.set([1])
+        layer1.themes.set([1])
 
+    def test_get_layers_for_theme(self):
+        request = self.factory.get("/data_manager/get_layer_catalog_content")
+        request.META["HTTP_HOST"] = "localhost:8000" 
 
+        response = get_layer_catalog_content(request, 1)
+        self.assertEqual(response.status_code, 200)
+        result = json.loads(response.content)
+        layer1 = Layer.objects.get(id=1)
 
+        self.assertIn("html", result)
 
+        self.assertIsInstance(result, dict)
+        self.assertIsInstance(result["html"], str)
+
+        self.assertEqual(result["html"], layer1.catalog_html)
