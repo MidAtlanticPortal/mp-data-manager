@@ -11,8 +11,9 @@ from django.views.decorators.cache import cache_page
 from .models import *
 from .serializers import BriefLayerSerializer
 from rest_framework import viewsets
-
 import json, requests
+
+
 
 class LayerViewSet(viewsets.ReadOnlyModelViewSet):
     """

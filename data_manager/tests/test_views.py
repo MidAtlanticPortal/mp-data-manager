@@ -1,8 +1,9 @@
 from django.test import TestCase
 from django.test.client import RequestFactory
-from data_manager.models import Layer, Theme
-from data_manager.views import get_json, get_themes, get_layer_search_data, get_layers_for_theme, wms_request_capabilities, get_layer_catalog_content
+from data_manager.models import Layer, Theme, Site
+from data_manager.views import layer_status, get_json, get_themes, get_layer_search_data, get_layers_for_theme, wms_request_capabilities, get_layer_catalog_content, get_catalog_records
 from collections.abc import Collection, Mapping
+import requests
 import json
 
 class DataManagerGetLayerDetailsTest(TestCase):
@@ -39,13 +40,13 @@ class DataManagerGetLayerDetailsTest(TestCase):
                             "wms_info_format", "utfurl", "subLayers", "companion_layers", "has_companion", "queryable", "legend", "legend_title", "legend_subtitle", "show_legend", "description", "overview", "data_source", "data_notes", "kml", "data_download", 
                             "learn_more", "metadata", "source", "tiles", "label_field", "attributes", "minZoom", "maxZoom", "lookups", "custom_style", "outline_color", "outline_opacity", "outline_width", "point_radius", "color", "fill_opacity", "graphic", "graphic_scale", "opacity",
                             "annotated", "is_disabled", "disabled_message", "data_url", "is_multilayer", "is_multilayer_parent", "dimensions", "associated_multilayers", "catalog_html", "parent", "date_modified"]
-
+        # Check if each attribute is present in the response for both layers
         for i in layer_attr:
             self.assertIn(i, result1)
             self.assertIn(i, result2)
         
         results = [result1, result2]
-
+        # List of attributes with their expected data types for validation
         for i in results:
             self.assertIsInstance(i["id"], int, "id should be int")
             self.assertIsInstance(i["uuid"], str, "uuid should be string")
@@ -118,9 +119,12 @@ class DataManagerGetLayerDetailsTest(TestCase):
         response = self.client.get("/data_manager/get_layer_details/2")
         self.assertEqual(response.status_code, 200)
         result= json.loads(response.content)
+
+        # Expected default attributes and lookups for layer 2
         expected_attributes = {"compress_attributes": False, "event": "click", "attributes": [], "mouseover_attribute": None, "preserved_format_attributes": []}
         expected_lookups = {"field": None, "details": []}
 
+        # Validate each attribute with its expected value
         self.assertEqual(result["id"], 2)
         self.assertEqual(result["name"], "Arc")
         self.assertEqual(result["order"], 10)
@@ -189,6 +193,8 @@ class DataManagerGetLayerDetailsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         result= json.loads(response.content)
         congress_layer_url="https://coast.noaa.gov/arcgis/rest/services/OceanReports/USCongressionalDistricts/MapServer/export"
+        
+        # Get Layer 3 and Layer 2 from the database and prepare dictionaries
         layer3 = Layer.objects.get(id=3)
         layer3dict = layer3.toDict
         layer3dict["uuid"] = str(layer3dict["uuid"])
@@ -197,9 +203,12 @@ class DataManagerGetLayerDetailsTest(TestCase):
         layer2 = Layer.objects.get(id=2)
         layer2dict = layer2.toDict
         layer2dict["uuid"] = str(layer2dict["uuid"])
+
+        # Define expected attributes and lookups
         expected_attributes = {"compress_attributes": False, "event": "click", "attributes": [], "mouseover_attribute": None, "preserved_format_attributes": []}
         expected_lookups = {"field": None, "details": []}
 
+        # Validate result against expected values
         self.assertEqual(result["id"], 1)
         self.assertEqual(result["name"], "arcrest_layer")
         self.assertEqual(result["order"], 15)
@@ -221,6 +230,7 @@ class DataManagerGetLayerDetailsTest(TestCase):
         self.assertEqual(result["wms_info"], True)
         self.assertEqual(result["wms_info_format"], "test")
         self.assertEqual(result["utfurl"], "testing")
+        # Validate subLayers and companion_layers
         for key in result["subLayers"][0].keys():
             #description and overview takes from parent, but parent should not be set
             if not key in ["is_sublayer", "date_modified", "companion_layers", "description", "overview"]:
@@ -279,6 +289,8 @@ class DataManagerGetJsonTest(TestCase):
         # Every test needs access to the request factory.
         self.factory = RequestFactory()
         congress_layer_url="https://coast.noaa.gov/arcgis/rest/services/OceanReports/USCongressionalDistricts/MapServer/export"
+        
+        # Create themes and layers for testing
         theme1 = Theme.objects.create(id=1, name="companion", display_name="companion", visible=True, description="test")
         theme1.site.set([1])
         theme2 = Theme.objects.create(id=2, name="companion2", display_name="companion2", visible=True)
@@ -291,6 +303,7 @@ class DataManagerGetJsonTest(TestCase):
         # This test layer will not have attributes defined other than required fields to test default behavior when attributes left empty
         layer1.site.set([1])
         layer1.themes.set([1])
+         # Create a test sublayer
         layer2 = Layer.objects.create(id=2, name="sublayer", layer_type="arcgis", is_sublayer=True)
         layer2.site.set([1])
         layer2.themes.set([1])
@@ -304,9 +317,13 @@ class DataManagerGetJsonTest(TestCase):
         self.assertEqual(response.status_code, 200)
         result = json.loads(response.content)
         congress_layer_url="https://coast.noaa.gov/arcgis/rest/services/OceanReports/USCongressionalDistricts/MapServer/export"
+        
+        # Get Layer 2 and prepare a dictionary for comparison
         layer2 = Layer.objects.get(id=2)
         layer2dict = layer2.toDict
         layer2dict["uuid"] = str(layer2dict["uuid"])
+
+        # Define expected attributes and lookups
         expected_attributes = {"compress_attributes": False, "event": "click", "attributes": [], "mouseover_attribute": None, "preserved_format_attributes": []}
         expected_lookups = {"field": None, "details": []}
 
@@ -326,6 +343,7 @@ class DataManagerGetJsonTest(TestCase):
         for i in theme_attr:
             self.assertIn(i, result["themes"][0])
 
+        # Validate data types of specific attributes in the JSON response
         self.assertIsInstance(result["success"], bool, "success should be bool")
         self.assertIsInstance(result["layers"], Collection, "layers should be collection")
         self.assertIsInstance(result["layers"][0]["id"], int, "id should be int")
@@ -702,19 +720,28 @@ class DataManagerWMSRequestCapabilities(TestCase):
         self.assertEqual(response.status_code, 200)
         result = json.loads(response.content)
 
+        # Validate the structure of the WMS capabilities response
         self.assertIn("layers", result)
         self.assertIn("formats", result)
         self.assertIn("version", result)
         self.assertIn("styles", result)
+
+        # Validate styles for each layer
         for i in range(len(result["layers"])):
             layer = result["layers"][i]
             self.assertIn(result["layers"][i], result["styles"])
+
+        # Validate SRS for each layer
         self.assertIn("srs", result)
         for i in range(len(result["layers"])):
             self.assertIn(result["layers"][i], result["srs"])
+
+        # Validate queryable layers
         self.assertIn("queryable", result)
         for i in range(len(result["queryable"])):
             self.assertIn(result["queryable"][i], result["layers"])
+        
+        # Validate time information for each layer
         self.assertIn("time", result)
         for i in range(len(result["layers"])):
             layer = result["layers"][i]
@@ -727,6 +754,7 @@ class DataManagerWMSRequestCapabilities(TestCase):
         self.assertIn("available", result["capabilities"]["featureInfo"])
         self.assertIn("formats", result["capabilities"]["featureInfo"])
 
+        # Validate data types of specific attributes in the WMS capabilities response
         self.assertIsInstance(result, dict)
         self.assertIsInstance(result["layers"], Collection)
         self.assertIsInstance(result["layers"][0], str)
@@ -755,6 +783,7 @@ class DataManagerWMSRequestCapabilities(TestCase):
         self.assertIsInstance(result["capabilities"]["featureInfo"]["available"], bool)
         self.assertIsInstance(result["capabilities"]["featureInfo"]["formats"], Collection)
 
+        # Validate specific values
         self.assertEqual(result["version"], "1.1.1")
         self.assertEqual(len(result["layers"]), len(result["styles"]))
         self.assertEqual(len(result["layers"]), len(result["srs"]))
@@ -777,7 +806,7 @@ class DataManagerGetLayerCatalogContent(TestCase):
         layer1.site.set([1])
         layer1.themes.set([1])
 
-    def test_get_layers_for_theme(self):
+    def test_get_layer_catalog_content(self):
         request = self.factory.get("/data_manager/get_layer_catalog_content")
         request.META["HTTP_HOST"] = "localhost:8000" 
 
@@ -786,9 +815,37 @@ class DataManagerGetLayerCatalogContent(TestCase):
         result = json.loads(response.content)
         layer1 = Layer.objects.get(id=1)
 
+        # Validate the structure of the response
         self.assertIn("html", result)
 
+        # Validate data types of specific attributes in the response
         self.assertIsInstance(result, dict)
         self.assertIsInstance(result["html"], str)
 
+        # Validate specific value
         self.assertEqual(result["html"], layer1.catalog_html)
+
+class DataManagerGetCatalogRecords(TestCase):
+    def test_get_catalog_records(self):
+        api_url = "https://portal.westcoastoceans.org/data_manager/get_catalog_records"
+
+        # Make a GET request to the live server since I can't mock
+        response = requests.get(api_url)
+
+        # Check if the response status code is 200 (OK)
+        self.assertEqual(response.status_code, 200)
+
+        # Assuming the response is in JSON format
+        data = response.json()
+
+        # Add more specific assertions based on the expected structure of the JSON response
+        self.assertIn('records', data)
+        self.assertIn('record_name_lookup', data)
+        self.assertIn('ELASTICSEARCH_INDEX', data)
+        self.assertIn('CATALOG_TECHNOLOGY', data)
+
+        self.assertIsInstance(data, dict, "data should be a JSON Object")
+        self.assertIsInstance(data['records'], dict, "records should be a JSON Object")
+        self.assertIsInstance(data['record_name_lookup'], dict, "record_name_lookup should be a JSON Object")
+        self.assertIsInstance(data['ELASTICSEARCH_INDEX'], str, "ELASTICSEARCH_INDEX should be a string")
+        self.assertIsInstance(data['CATALOG_TECHNOLOGY'], str, "CATALOG_TECHNOLOGY should be a string")
